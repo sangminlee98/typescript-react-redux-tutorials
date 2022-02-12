@@ -6,9 +6,10 @@ import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './modules';
 import { Provider } from 'react-redux';
 import { createLogger } from 'redux-logger';
+import ReduxThunk from 'redux-thunk';
 
 const logger = createLogger();
-const store = createStore(rootReducer, applyMiddleware(logger));
+const store = createStore(rootReducer, applyMiddleware(logger, ReduxThunk));
 
 ReactDOM.render(
   <React.StrictMode>
