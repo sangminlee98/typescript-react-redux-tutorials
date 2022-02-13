@@ -9,13 +9,14 @@ const DECREASE: Type = 'counter/DECREASE';
 export const increase = () => ({type: INCREASE});
 export const decrease = () => ({type: DECREASE});
 
+
 // 1초 뒤에 increase 혹은 decrease 함수를 디스패치함
-export const increaseAsync = () => (dispatch: Dispatch<any>) => {
+export const increaseAsync = () => (dispatch: Dispatch<Action>) => {
   setTimeout(() => {
     dispatch(increase());
   }, 1000)
 }
-export const decreaseAsync = () => (dispatch: Dispatch<any>) => {
+export const decreaseAsync = () => (dispatch: Dispatch<Action>) => {
   setTimeout(() => {
     dispatch(decrease());
   }, 1000)
