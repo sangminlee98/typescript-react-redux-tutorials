@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Sample from '../components/Sample';
@@ -8,8 +7,8 @@ import { getPost, getUsers, PostData, UsersData } from '../modules/sample';
 type Props = {
   getPost: (id: number) => Promise<void>,
   getUsers: (id: number) => Promise<void>,
-  post: PostData | AxiosError | null | undefined,
-  users: UsersData[] | AxiosError | null | undefined,
+  post: PostData | null | undefined,
+  users: UsersData[] | null | undefined,
   loadingPost: boolean,
   loadingUsers: boolean
 }
@@ -22,7 +21,7 @@ const SampleContainer = ({
   getUsers
 }: Props) => {
   useEffect(() => {
-    getPost(1);
+    getPost(3);
     getUsers(1);
   },[getPost, getUsers])
   return (

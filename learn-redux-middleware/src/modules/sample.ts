@@ -23,8 +23,8 @@ type State = {
     GET_POST: boolean,
     GET_USERS: boolean
   },
-  post: null | PostData | AxiosError | undefined,
-  users: null | UsersData[] | AxiosError | undefined
+  post: null | PostData | undefined,
+  users: null | UsersData[] | undefined
 }
 type PostType = 'sample/GET_POST' | 'sample/GET_POST_SUCCESS' | 'sample/GET_POST_FAILURE';
 type UserType = 'sample/GET_USERS' | 'sample/GET_USERS_SUCCESS' | 'sample/GET_USERS_FAILURE';
@@ -103,7 +103,7 @@ const sample = (state = initialState, action: PostAction | UsersAction ): State 
           ...state.loading,
           GET_POST: false
         },
-        post: action.payload
+        post: action.payload as PostData
       }
     case GET_POST_FAILURE:
       return {
@@ -111,7 +111,7 @@ const sample = (state = initialState, action: PostAction | UsersAction ): State 
         loading: {
           ...state.loading,
           GET_POST: false
-        }
+        },
       }
     case GET_USERS:
       return {
@@ -128,7 +128,7 @@ const sample = (state = initialState, action: PostAction | UsersAction ): State 
           ...state.loading,
           GET_USERS: false
         },
-        users: action.payload
+        users: action.payload as UsersData[]
       }
     case GET_USERS_FAILURE:
       return {
