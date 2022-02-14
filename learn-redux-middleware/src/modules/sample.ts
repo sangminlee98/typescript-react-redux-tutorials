@@ -2,15 +2,16 @@ import { AxiosError } from 'axios';
 import { Dispatch } from 'react';
 import * as api from '../lib/api';
 
-type PostData = {
-  userId: string,
-  id: number,
-  title: string,
-  body: string
+export type PostData = {
+  userId?: string,
+  id?: number,
+  title?: string,
+  body?: string,
 }
-type UsersData = {
+export type UsersData = {
   id: number,
   name: string,
+  username: string,
   email: string,
   address: {},
   phone: string,
@@ -22,13 +23,13 @@ type State = {
     GET_POST: boolean,
     GET_USERS: boolean
   },
-  post: null | PostData,
-  users: null | UsersData[]
+  post: null | PostData | AxiosError | undefined,
+  users: null | UsersData[] | AxiosError | undefined
 }
 type PostType = 'sample/GET_POST' | 'sample/GET_POST_SUCCESS' | 'sample/GET_POST_FAILURE';
 type UserType = 'sample/GET_USERS' | 'sample/GET_USERS_SUCCESS' | 'sample/GET_USERS_FAILURE';
-type PostAction = {type: PostType, payload?: PostData | AxiosError , error?: boolean};
-type UsersAction = {type: UserType, payload?: UsersData[] | AxiosError , error?: boolean};
+export type PostAction = {type: PostType, payload?: PostData | AxiosError, error?: boolean};
+export type UsersAction = {type: UserType, payload?: UsersData[] | AxiosError, error?: boolean};
 
 const GET_POST: PostType = 'sample/GET_POST';
 const GET_POST_SUCCESS: PostType = 'sample/GET_POST_SUCCESS';
@@ -58,7 +59,7 @@ export const getPost = (id: number) => async (dispatch: Dispatch<PostAction>) =>
   }
 }
 
-export const getUser = (id: number) => async (dispatch: Dispatch<UsersAction>) => {
+export const getUsers = (id: number) => async (dispatch: Dispatch<UsersAction>) => {
   dispatch({type: GET_USERS});
   try {
     const response = await api.getUsers(id);
@@ -85,7 +86,7 @@ const initialState: State = {
   users: null
 }
 
-const sample = (state = initialState, action: PostAction | UsersAction ) => {
+const sample = (state = initialState, action: PostAction | UsersAction ): State => {
   switch(action.type) {
     case GET_POST:
       return {
