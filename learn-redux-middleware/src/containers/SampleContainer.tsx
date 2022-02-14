@@ -1,29 +1,23 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Sample from '../components/Sample';
 import { RootState } from '../modules';
-import { getPost, getUsers, PostData, UsersData } from '../modules/sample';
+import { getPost, getUsers } from '../modules/sample';
 
-type Props = {
-  getPost: (id: number) => Promise<void>,
-  getUsers: (id: number) => Promise<void>,
-  post: PostData | null | undefined,
-  users: UsersData[] | null | undefined,
-  loadingPost: boolean,
-  loadingUsers: boolean
-}
-const SampleContainer = ({
-  post,
-  users,
-  loadingPost,
-  loadingUsers,
-  getPost,
-  getUsers
-}: Props) => {
+const SampleContainer = () => {
+  const {post, users, loadingPost, loadingUsers} = useSelector(({sample}: RootState) => ({
+    post: sample.post,
+    users: sample.users,
+    loadingPost: sample.loading.GET_POST,
+    loadingUsers: sample.loading.GET_USERS
+  }));
+  const dispatch = useDispatch();
+  const onGetPost = useCallback((id: number) => dispatch(getPost(id)),[dispatch]);
+  const onGetUsers = useCallback((id: number) => dispatch(getUsers(id)),[dispatch]);
   useEffect(() => {
-    getPost(3);
-    getUsers(1);
-  },[getPost, getUsers])
+    onGetPost(3);
+    onGetUsers(1);
+  },[onGetPost, onGetUsers])
   return (
     <Sample 
       post={post}
@@ -34,15 +28,4 @@ const SampleContainer = ({
   );
 };
 
-export default connect(
-  ({sample}: RootState) => ({
-    post: sample.post,
-    users: sample.users,
-    loadingPost: sample.loading.GET_POST,
-    loadingUsers: sample.loading.GET_USERS
-  }),
-  {
-    getPost,
-    getUsers,
-  }
-)(SampleContainer);
+export default React.memo(SampleContainer);
