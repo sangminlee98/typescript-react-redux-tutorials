@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
-import { Dispatch } from 'react';
 import * as api from '../lib/api';
+import createRequestThunk from '../lib/createRequestThunk';
 
 export type PostData = {
   userId?: string,
@@ -26,8 +26,8 @@ type State = {
   post: null | PostData | undefined,
   users: null | UsersData[] | undefined
 }
-type PostType = 'sample/GET_POST' | 'sample/GET_POST_SUCCESS' | 'sample/GET_POST_FAILURE';
-type UserType = 'sample/GET_USERS' | 'sample/GET_USERS_SUCCESS' | 'sample/GET_USERS_FAILURE';
+export type PostType = 'sample/GET_POST' | 'sample/GET_POST_SUCCESS' | 'sample/GET_POST_FAILURE';
+export type UserType = 'sample/GET_USERS' | 'sample/GET_USERS_SUCCESS' | 'sample/GET_USERS_FAILURE';
 export type PostAction = {type: PostType, payload?: PostData | AxiosError, error?: boolean};
 export type UsersAction = {type: UserType, payload?: UsersData[] | AxiosError, error?: boolean};
 
@@ -41,41 +41,8 @@ const GET_USERS_SUCCESS: UserType = 'sample/GET_USERS_SUCCESS';
 const GET_USERS_FAILURE: UserType = 'sample/GET_USERS_FAILURE';
 
 
-export const getPost = (id: number) => async (dispatch: Dispatch<PostAction>) => {
-  dispatch({type: GET_POST});
-  try {
-    const response = await api.getPost(id);
-    dispatch({
-      type: GET_POST_SUCCESS,
-      payload: response.data
-    })
-  } catch(e) {
-    dispatch({
-      type: GET_POST_FAILURE,
-      payload: e as AxiosError,
-      error: true
-    });
-    throw e;
-  }
-}
-
-export const getUsers = (id: number) => async (dispatch: Dispatch<UsersAction>) => {
-  dispatch({type: GET_USERS});
-  try {
-    const response = await api.getUsers(id);
-    dispatch({
-      type: GET_USERS_SUCCESS,
-      payload: response.data
-    })
-  } catch(e) {
-    dispatch({
-      type: GET_USERS_FAILURE,
-      payload: e as AxiosError,
-      error: true,
-    });
-    throw e;
-  }
-};
+export const getPost = createRequestThunk(GET_POST, api.getPost);
+export const getUsers = createRequestThunk(GET_USERS, api.getUsers);
 
 const initialState: State = {
   loading: {
