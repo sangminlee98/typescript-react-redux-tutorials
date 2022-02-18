@@ -1,15 +1,15 @@
 import React from 'react';
-import { Todo } from '../modules/todos';
+import { TodoState } from '../modules/todos';
 
 type TodoItemProps = {
-  todo: Todo,
+  todo: TodoState,
   onToggle: (id: number) => void,
   onRemove: (id: number) => void,
 };
 type TodoProps = {
-  input: any,
-  todos: Todo[],
-  onChangeInput: (input: any) => void,
+  input: string,
+  todos: TodoState[],
+  onChangeInput: (input: string) => void,
   onInsert: (text: string) => void,
   onToggle: (id: number) => void,
   onRemove: (id: number) => void,
