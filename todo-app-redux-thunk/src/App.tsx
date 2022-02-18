@@ -1,13 +1,10 @@
 import './App.css';
-import CounterContainer from './containers/CounterContainer';
-import TodosContainer from './containers/TodosContainer';
+import GithubProfileLoader from './containers/GithubProfileLoader';
 
 const App = () => {
   return (
     <div>
-      <CounterContainer/>
-      <hr />
-      <TodosContainer />
+      <GithubProfileLoader />
     </div>
   );
 }
