@@ -1,13 +1,20 @@
 import { Dispatch } from 'react';
+import {
+  createAction,
+  ActionType,
+  createReducer
+} from 'typesafe-actions';
 
-type CounterAction = ReturnType<typeof increase> | ReturnType<typeof decrease>;
+const INCREASE = 'counter/INCREASE';
+const DECREASE = 'counter/DECREASE';
+const INCREASE_BY = 'counter/INCREASE_BY';
 
-const INCREASE = 'counter/INCREASE' as const;
-const DECREASE = 'counter/DECREASE' as const;
+export const increase = createAction(INCREASE)();
+export const decrease = createAction(DECREASE)();
+export const increaseBy = createAction(INCREASE_BY)<number>();
 
-export const increase = () => ({type: INCREASE});
-export const decrease = () => ({type: DECREASE});
-
+const actions = {increase, decrease, increaseBy};
+type CounterAction = ActionType<typeof actions>
 
 // 1초 뒤에 increase 혹은 decrease 함수를 디스패치함
 export const increaseAsync = () => (dispatch: Dispatch<CounterAction>) => {
@@ -20,17 +27,18 @@ export const decreaseAsync = () => (dispatch: Dispatch<CounterAction>) => {
     dispatch(decrease());
   }, 1000)
 }
-
-const initialState = 0;
-const counter = (state = initialState, action: CounterAction) => {
-  switch(action.type) {
-    case INCREASE:
-      return state + 1;
-    case DECREASE:
-      return state - 1;
-    default:
-      return state;
-  }
+export const increaseByAsync = (num: number) => (dispatch: Dispatch<CounterAction>) => {
+  setTimeout(() => {
+    dispatch(increaseBy(num));
+  }, 1000)
 }
+type CounterState = number;
+const initialState = 0;
+
+const counter = createReducer<CounterState, CounterAction>(initialState, {
+  [INCREASE]: state => state + 1,
+  [DECREASE]: state => state - 1,
+  [INCREASE_BY]: (state, action) => state + action.payload
+})
 
 export default counter;
