@@ -9,7 +9,10 @@ const Pokemon = ({pokemon}: Props) => {
     <div>
       <section>
         {pokemon.abilities.map(ability => {
-          return <p key={ability.ability.name}>{ability.ability.name}</p>
+          return (<div key={ability.ability.name}>
+            <p>{ability.ability.name}</p>
+            <img src={pokemon.sprites.front_default} alt="img" />
+          </div>)
         })}
       </section>
     </div>
