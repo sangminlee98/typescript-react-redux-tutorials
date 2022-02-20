@@ -1,4 +1,4 @@
-import { PostData, UsersData } from '../modules/sample';
+import { PostData, UsersData } from '../lib/api';
 
 type Props = {
   post: null | PostData| undefined,

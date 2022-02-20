@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Sample from '../components/Sample';
 import { RootState } from '../modules';
-import { getPost, getUsers } from '../modules/sample';
+import { getPostThunk, getUsersThunk } from '../modules/sample';
 
 const SampleContainer = () => {
   const {post, users, loadingPost, loadingUsers} = useSelector(({sample}: RootState) => ({
@@ -12,12 +12,10 @@ const SampleContainer = () => {
     loadingUsers: sample.loading.GET_USERS
   }));
   const dispatch = useDispatch();
-  const onGetPost = useCallback((id: number) => dispatch(getPost(id)),[dispatch]);
-  const onGetUsers = useCallback((id: number) => dispatch(getUsers(id)),[dispatch]);
   useEffect(() => {
-    onGetPost(3);
-    onGetUsers(1);
-  },[onGetPost, onGetUsers])
+    dispatch(getPostThunk(5));
+    dispatch(getUsersThunk());
+  },[dispatch])
   return (
     <Sample 
       post={post}

@@ -1,23 +1,58 @@
+import { RootState } from './index';
 import { AxiosError } from 'axios';
-import * as api from '../lib/api';
-import createRequestThunk from '../lib/createRequestThunk';
+import { ThunkAction } from 'redux-thunk';
+import { ActionType, createAsyncAction, createReducer } from 'typesafe-actions';
+import { PostData, UsersData, getPost, getUsers } from '../lib/api';
 
-export type PostData = {
-  userId?: string,
-  id?: number,
-  title?: string,
-  body?: string,
+const GET_POST = 'sample/GET_POST';
+const GET_POST_SUCCESS = 'sample/GET_POST_SUCCESS';
+const GET_POST_FAILURE = 'sample/GET_POST_FAILURE';
+
+export const getPostAsync = createAsyncAction(
+  GET_POST,
+  GET_POST_SUCCESS,
+  GET_POST_FAILURE
+)<undefined, PostData, AxiosError>();
+
+const GET_USERS = 'sample/GET_USERS';
+const GET_USERS_SUCCESS = 'sample/GET_USERS_SUCCESS';
+const GET_USERS_FAILURE = 'sample/GET_USERS_FAILURE';
+
+export const getUsersAsync = createAsyncAction(
+  GET_USERS,
+  GET_USERS_SUCCESS,
+  GET_USERS_FAILURE
+)<undefined, UsersData[], AxiosError>();
+
+export type PostAction = ActionType<typeof getPostAsync>;
+export type UsersAction = ActionType<typeof getUsersAsync>;
+
+export const getPostThunk = (id: number): ThunkAction<Promise<void>, RootState, null, PostAction> => {
+  return async dispatch => {
+    const {request, success, failure} = getPostAsync;
+    dispatch(request());
+    try {
+      const postData = await getPost(id);
+      dispatch(success(postData));
+    } catch (e) {
+      dispatch(failure(e as AxiosError));
+    }
+  }
 }
-export type UsersData = {
-  id: number,
-  name: string,
-  username: string,
-  email: string,
-  address: {},
-  phone: string,
-  website: string,
-  company: {}
+
+export const getUsersThunk = (): ThunkAction<Promise<void>, RootState, null, UsersAction> => {
+  return async dispatch => {
+    const {request, success, failure} = getUsersAsync;
+    dispatch(request());
+    try {
+      const usersData = await getUsers();
+      dispatch(success(usersData));
+    } catch (e) {
+      dispatch(failure(e as AxiosError));
+    }
+  }
 }
+
 type State = {
   loading: {
     GET_POST: boolean,
@@ -26,23 +61,6 @@ type State = {
   post: null | PostData | undefined,
   users: null | UsersData[] | undefined
 }
-export type PostType = 'sample/GET_POST' | 'sample/GET_POST_SUCCESS' | 'sample/GET_POST_FAILURE';
-export type UserType = 'sample/GET_USERS' | 'sample/GET_USERS_SUCCESS' | 'sample/GET_USERS_FAILURE';
-export type PostAction = {type: PostType, payload?: PostData | AxiosError, error?: boolean};
-export type UsersAction = {type: UserType, payload?: UsersData[] | AxiosError, error?: boolean};
-
-const GET_POST: PostType = 'sample/GET_POST';
-const GET_POST_SUCCESS: PostType = 'sample/GET_POST_SUCCESS';
-const GET_POST_FAILURE: PostType = 'sample/GET_POST_FAILURE';
-
-
-const GET_USERS: UserType = 'sample/GET_USERS';
-const GET_USERS_SUCCESS: UserType = 'sample/GET_USERS_SUCCESS';
-const GET_USERS_FAILURE: UserType = 'sample/GET_USERS_FAILURE';
-
-
-export const getPost = createRequestThunk(GET_POST, api.getPost);
-export const getUsers = createRequestThunk(GET_USERS, api.getUsers);
 
 const initialState: State = {
   loading: {
@@ -53,60 +71,51 @@ const initialState: State = {
   users: null
 }
 
-const sample = (state = initialState, action: PostAction | UsersAction ): State => {
-  switch(action.type) {
-    case GET_POST:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_POST: true
-        }
-      }
-    case GET_POST_SUCCESS:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_POST: false
-        },
-        post: action.payload as PostData
-      }
-    case GET_POST_FAILURE:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_POST: false
-        },
-      }
-    case GET_USERS:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_USERS: true
-        }
-      }
-    case GET_USERS_SUCCESS:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_USERS: false
-        },
-        users: action.payload as UsersData[]
-      }
-    case GET_USERS_FAILURE:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          GET_USERS: false
-        }
-      }
-    default: return state
-  }
-}
+const sample = createReducer<State, PostAction | UsersAction>(initialState, {
+  [GET_POST]: state => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_POST: true
+    }
+  }),
+  [GET_POST_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_POST: false
+    },
+    post: action.payload
+  }),
+  [GET_POST_FAILURE]: state => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_POST: false
+    }
+  }),
+  [GET_USERS]: state => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_USERS: true
+    }
+  }),
+  [GET_USERS_SUCCESS]: (state, action) => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_USERS: false
+    },
+    users: action.payload
+  }),
+  [GET_USERS_FAILURE]: state => ({
+    ...state,
+    loading: {
+      ...state.loading,
+      GET_USERS: false
+    }
+  })
+});
 
 export default sample

@@ -2,7 +2,7 @@ import { Dispatch } from 'react';
 import {
   createAction,
   ActionType,
-  createReducer
+  createReducer,
 } from 'typesafe-actions';
 
 const INCREASE = 'counter/INCREASE';
@@ -15,6 +15,7 @@ export const increaseBy = createAction(INCREASE_BY)<number>();
 
 const actions = {increase, decrease, increaseBy};
 type CounterAction = ActionType<typeof actions>
+
 
 // 1초 뒤에 increase 혹은 decrease 함수를 디스패치함
 export const increaseAsync = () => (dispatch: Dispatch<CounterAction>) => {
